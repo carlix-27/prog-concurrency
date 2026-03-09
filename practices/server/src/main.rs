@@ -4,8 +4,7 @@ mod process_http_call;
 use crate::process_http_call::{read_request_line, parse_request_line, route_request};
 
 use std::{
-    fs,
-    io::{BufReader, prelude::*},
+    io::{prelude::*},
     net::{TcpListener, TcpStream},
 };
 
