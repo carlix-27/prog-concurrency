@@ -1,12 +1,11 @@
 mod worker;
 
-use std::{
-    sync::{Arc, Mutex, mpsc},
-};
-use std::sync::mpsc::Receiver;
 use crate::worker::Worker;
+use std::sync::{mpsc, Arc, Mutex};
 
-pub trait FnOnce{}
+pub trait FnOnce{
+    type Output;
+}
 
 
 pub struct ThreadPool {
@@ -14,7 +13,7 @@ pub struct ThreadPool {
     sender: Option<mpsc::Sender<Job>>,
 }
 
-pub type Job = Box<dyn FnOnce() + Send + 'static>;
+type Job = Box<dyn FnOnce() + Send + 'static>;
 
 /// Create a new ThreadPool.
 /// The size is the number of threads in the pool.
@@ -28,14 +27,14 @@ impl ThreadPool {
 
         let (sender, receiver) = mpsc::channel();
 
-        let receiver_job: Arc<Mutex<Receiver<Job>>> = Arc::new(Mutex::new(receiver));
+        let receiver_job= Arc::new(Mutex::new(receiver));
 
         let mut workers = Vec::with_capacity(size);
 
         for id in 0..size {
-            let thread_receiver: Arc<Mutex<Receiver<Job>>> = Arc::clone(&receiver_job);
+            let thread_receiver = Arc::clone(&receiver_job);
 
-            workers.push(Worker::new(id, thread_receiver));
+            workers.push(Worker::new(id, thread_receiver.first()));
         }
 
         ThreadPool {
