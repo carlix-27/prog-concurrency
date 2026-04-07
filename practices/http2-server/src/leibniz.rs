@@ -1,4 +1,5 @@
 use std::thread;
+
 use std::time::Instant;
 
 pub fn calculate_pi_parallel(n_terms: u64, n_threads: usize) -> (f64, f64) {
@@ -7,6 +8,7 @@ pub fn calculate_pi_parallel(n_terms: u64, n_threads: usize) -> (f64, f64) {
     let chunk_size = n_terms / n_threads as u64;
     let mut handles = Vec::new();
 
+    // Ver tema, analisis de los chunks, lo que hace aca es paralelizar el calculo de liebniz
     for i in 0..n_threads {
         let start = i as u64 * chunk_size;
         let end = if i == n_threads - 1 {
@@ -15,6 +17,7 @@ pub fn calculate_pi_parallel(n_terms: u64, n_threads: usize) -> (f64, f64) {
             start + chunk_size
         };
 
+        // Aca estamos haciendo la logica de separara en threads la logica de leibniz
         let handle = thread::spawn(move || {
             let mut local_sum = 0.0;
             for n in start..end {
@@ -28,10 +31,7 @@ pub fn calculate_pi_parallel(n_terms: u64, n_threads: usize) -> (f64, f64) {
         handles.push(handle);
     }
 
-    let total_sum: f64 = handles
-        .into_iter()
-        .map(|h| h.join().unwrap())
-        .sum();
+    let total_sum: f64 = handles.into_iter().map(|h| h.join().unwrap()).sum();
 
     let duration = start_time.elapsed().as_secs_f64(); // ← para el cronómetro
 

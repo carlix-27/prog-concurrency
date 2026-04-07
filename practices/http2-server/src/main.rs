@@ -1,25 +1,21 @@
 use std::{
-    io::{prelude::*},
+    io::prelude::*,
     net::{TcpListener, TcpStream},
+    thread,
 };
-use http2_server::ThreadPool;
 
 mod handler;
 mod leibniz;
 
 fn main() {
-    let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
-    let pool = ThreadPool::new(4); // Four threads 
+    let listener = TcpListener::bind("127.0.0.1:3030").unwrap();
 
-    for stream in listener.incoming().take(2) {
+    for stream in listener.incoming() {
         let stream = stream.unwrap();
-
-        pool.execute(|| {
+        thread::spawn(|| {
             handle_connection(stream);
         });
     }
-
-    println!("Shutting down.");
 }
 
 pub fn handle_connection(mut stream: TcpStream) {
@@ -28,3 +24,4 @@ pub fn handle_connection(mut stream: TcpStream) {
     let response = handler::route_request(&method, &path);
     stream.write_all(response.as_bytes()).unwrap();
 }
+

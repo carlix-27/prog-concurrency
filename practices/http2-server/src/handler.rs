@@ -1,5 +1,5 @@
 use std::{
-    io::{BufWriter, prelude::*},
+    io::{prelude::*},
     net::TcpStream,
 };
 use std::io::BufReader;
