@@ -6,8 +6,8 @@ use std::thread;
 enum ChefType { Cook, Cutter, Reheater }
 
 struct KitchenState {
-    burners: Vec<bool>, // true = libre
-    boards: Vec<bool>,  // true = libre
+    burners: Vec<bool, u32>, // true = libre
+    boards: Vec<bool,u32>,  // true = libre
 }
 
 pub struct Kitchen {
